@@ -2,7 +2,6 @@ package com.redstoneschema42.bladeofperdition.mixin;
 
 import com.redstoneschema42.bladeofperdition.ModItems;
 import net.minecraft.world.entity.ai.attributes.Attributes;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
@@ -18,14 +17,6 @@ public class PlayerMixin {
         Player player = (Player)(Object)this;
         
         if (player.level().isClientSide()) return;
-
-
-        player.level().getEntitiesOfClass(ItemEntity.class, player.getBoundingBox().inflate(10.0D)).forEach(itemEntity -> {
-            if (itemEntity.getItem().is(ModItems.BLADE_OF_PERDITION.get())) {
-                itemEntity.discard();
-            }
-        });
-
 
         boolean hasBlade = false;
         
@@ -50,9 +41,7 @@ public class PlayerMixin {
             hasBlade = true;
         }
 
-        
         if (hasBlade) {
-        
             if (player.getHealth() != 20.0F) {
                 player.setHealth(20.0F);
             }
@@ -60,10 +49,7 @@ public class PlayerMixin {
                 player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
             }
         } else {
-
-            if (player.tickCount % 20 == 0) {
-                player.getInventory().add(new ItemStack(ModItems.BLADE_OF_PERDITION.get()));
-            }
+            player.getInventory().add(new ItemStack(ModItems.BLADE_OF_PERDITION.get()));
         }
     }
 }
