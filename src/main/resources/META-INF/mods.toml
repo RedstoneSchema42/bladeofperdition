@@ -4,9 +4,9 @@ license="All Rights Reserved"
 
 [[mods]]
 modId="bladeofperdition"
-version="1.0.0"
-displayName="终焉之刃"
-description='''添加了终焉之刃的模组。'''
+version="${mod_version}"
+displayName="${mod_name}"
+description='''${mod_description}'''
 
 [[dependencies.bladeofperdition]]
     modId="forge"
