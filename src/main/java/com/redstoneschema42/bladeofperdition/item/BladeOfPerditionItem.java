@@ -32,11 +32,10 @@ public class BladeOfPerditionItem extends SwordItem {
             builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(
                     ATTACK_DAMAGE_UUID,
                     "Weapon modifier",
-                    Float.MAX_VALUE, //Float.MAX_VALUE
+                    Float.MAX_VALUE,
                     AttributeModifier.Operation.ADDITION
             ));
 
-            //Float.MAX_VALUE
             builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(
                     ATTACK_SPEED_UUID,
                     "Weapon modifier",
@@ -52,6 +51,10 @@ public class BladeOfPerditionItem extends SwordItem {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         target.setSecondsOnFire(5);
-        return super.hurtEnemy(stack, target, attacker);
+        if (!target.level().isClientSide())｛
+            target.kill();
+        }
+
+        return true;
     }
 }
