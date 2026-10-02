@@ -51,7 +51,7 @@ public class BladeOfPerditionItem extends SwordItem {
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
         target.setSecondsOnFire(5);
-        if (!target.level().isClientSide())｛
+        if (!target.level().isClientSide()) {
             target.kill();
         }
 
