@@ -1,0 +1,13 @@
+{
+  "required": true,
+  "package": "com.redstoneschema42.bladeofperdition.mixin",
+  "compatibilityLevel": "JAVA_17",
+  "refmap": "bladeofperdition.refmap.json",
+  "mixins": [
+    "EntityMixin",
+    "LivingEntityMixin",
+    "PlayerMixin"
+  ],
+  "client": [],
+  "minVersion": "0.8"
+}
