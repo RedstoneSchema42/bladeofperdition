@@ -6,10 +6,10 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
@@ -49,24 +49,15 @@ public class BladeOfPerditionItem extends SwordItem {
     }
 
     @Override
-    public boolean onDroppedByPlayer(ItemStack item, Player player) {
-        return false;
-    }
-
-    @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
         ItemStack stack = player.getItemInHand(hand);
         if (player.isShiftKeyDown()) {
             if (!level.isClientSide()) {
-                if (player.getCooldowns().isOnCooldown(this)) {
-                    return InteractionResultHolder.fail(stack);
-                }
                 level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(10.0D)).forEach(entity -> {
                     if (entity != player) {
                         entity.setHealth(0.0F);
                     }
                 });
-                player.getCooldowns().addCooldown(this, 100);
             }
             return InteractionResultHolder.success(stack);
         } else {
