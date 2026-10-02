@@ -2,23 +2,26 @@ package com.redstoneschema42.bladeofperdition.item;
 
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.Tiers;
+import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.level.Level;
 
 import java.util.UUID;
 
 public class BladeOfPerditionItem extends SwordItem {
 
-    private static final UUID ATTACK_DAMAGE_UUID =
-            UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
-    private static final UUID ATTACK_SPEED_UUID =
-            UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
+    private static final UUID ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
+    private static final UUID ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 
     public BladeOfPerditionItem() {
         super(Tiers.NETHERITE, 5, -2.4F, new Properties().stacksTo(1));
@@ -28,21 +31,10 @@ public class BladeOfPerditionItem extends SwordItem {
     public Multimap<Attribute, AttributeModifier> getDefaultAttributeModifiers(EquipmentSlot slot) {
         if (slot == EquipmentSlot.MAINHAND) {
             ImmutableMultimap.Builder<Attribute, AttributeModifier> builder = ImmutableMultimap.builder();
-
             builder.put(Attributes.ATTACK_DAMAGE, new AttributeModifier(
-                    ATTACK_DAMAGE_UUID,
-                    "Weapon modifier",
-                    Float.MAX_VALUE,
-                    AttributeModifier.Operation.ADDITION
-            ));
-
+                    ATTACK_DAMAGE_UUID, "Weapon modifier", Float.MAX_VALUE, AttributeModifier.Operation.ADDITION));
             builder.put(Attributes.ATTACK_SPEED, new AttributeModifier(
-                    ATTACK_SPEED_UUID,
-                    "Weapon modifier",
-                    Float.MAX_VALUE,
-                    AttributeModifier.Operation.ADDITION
-            ));
-
+                    ATTACK_SPEED_UUID, "Weapon modifier", Float.MAX_VALUE, AttributeModifier.Operation.ADDITION));
             return builder.build();
         }
         return super.getDefaultAttributeModifiers(slot);
@@ -50,11 +42,46 @@ public class BladeOfPerditionItem extends SwordItem {
 
     @Override
     public boolean hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker) {
-        target.setSecondsOnFire(5);
         if (!target.level().isClientSide()) {
-            target.kill();
+            target.setHealth(0.0F);
         }
-
         return true;
+    }
+
+    @Override
+    public boolean onDroppedByPlayer(ItemStack item, Player player) {
+        return false;
+    }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand hand) {
+        ItemStack stack = player.getItemInHand(hand);
+        if (player.isShiftKeyDown()) {
+            if (!level.isClientSide()) {
+                if (player.getCooldowns().isOnCooldown(this)) {
+                    return InteractionResultHolder.fail(stack);
+                }
+                level.getEntitiesOfClass(LivingEntity.class, player.getBoundingBox().inflate(10.0D)).forEach(entity -> {
+                    if (entity != player) {
+                        entity.setHealth(0.0F);
+                    }
+                });
+                player.getCooldowns().addCooldown(this, 100);
+            }
+            return InteractionResultHolder.success(stack);
+        } else {
+            player.startUsingItem(hand);
+            return InteractionResultHolder.consume(stack);
+        }
+    }
+
+    @Override
+    public int getUseDuration(ItemStack stack) {
+        return 72000;
+    }
+
+    @Override
+    public UseAnim getUseAnimation(ItemStack stack) {
+        return UseAnim.BLOCK;
     }
 }
