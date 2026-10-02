@@ -3,6 +3,7 @@ package com.redstoneschema42.bladeofperdition.mixin;
 import com.redstoneschema42.bladeofperdition.ModItems;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
@@ -18,6 +19,24 @@ public class PlayerMixin {
         
         if (player.level().isClientSide()) return;
 
+        
+        ItemStack carried = player.containerMenu.getCarried();
+        if (carried.is(ModItems.BLADE_OF_PERDITION.get())) {
+            player.containerMenu.setCarried(ItemStack.EMPTY);
+            player.getInventory().add(new ItemStack(ModItems.BLADE_OF_PERDITION.get()));
+        }
+
+    
+        if (player.containerMenu != player.inventoryMenu) {
+            for (Slot slot : player.containerMenu.slots) {
+                if (slot.getItem().is(ModItems.BLADE_OF_PERDITION.get())) {
+                    slot.set(ItemStack.EMPTY);
+                    player.getInventory().add(new ItemStack(ModItems.BLADE_OF_PERDITION.get()));
+                }
+            }
+        }
+
+    
         boolean hasBlade = false;
         
         for (ItemStack stack : player.getInventory().items) {
@@ -37,10 +56,8 @@ public class PlayerMixin {
         if (!hasBlade && player.getOffhandItem().is(ModItems.BLADE_OF_PERDITION.get())) {
             hasBlade = true;
         }
-        if (!hasBlade && player.containerMenu.getCarried().is(ModItems.BLADE_OF_PERDITION.get())) {
-            hasBlade = true;
-        }
 
+    
         if (hasBlade) {
             if (player.getHealth() != 20.0F) {
                 player.setHealth(20.0F);
@@ -49,6 +66,7 @@ public class PlayerMixin {
                 player.getAttribute(Attributes.MAX_HEALTH).setBaseValue(20.0);
             }
         } else {
+        
             player.getInventory().add(new ItemStack(ModItems.BLADE_OF_PERDITION.get()));
         }
     }
