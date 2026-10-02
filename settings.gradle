@@ -1,12 +1,9 @@
 pluginManagement {
     repositories {
-        maven { url 'https://maven.aliyun.com/repository/public' }
-        maven { url 'https://maven.aliyun.com/repository/gradle-plugin' }
-        maven { url 'https://bmclapi2.bangbang93.com/maven/' }
         gradlePluginPortal()
-        maven { url 'https://maven.minecraftforge.net/' }
-        maven { url 'https://repo.spongepowered.org/repository/maven-public/' }
+        maven { url = 'https://maven.minecraftforge.net/' }
+        maven { url = 'https://repo.spongepowered.org/repository/maven-public/' }
     }
 }
 
-rootProject.name = 'forge-1.20.1-47.4.23-mdk'
+rootProject.name = 'bladeofperdition'
